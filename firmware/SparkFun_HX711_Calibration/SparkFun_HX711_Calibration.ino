@@ -33,6 +33,7 @@
  
 */
 
+#include "string.h"
 #include "HX711.h"
 
 #define DOUT  3
@@ -40,7 +41,7 @@
 
 HX711 scale;
 
-float calibration_factor = -7050; //-7050 worked for my 440lb max scale setup
+float calibration_factor = 13000; // Calibration of Mini Load Cell - 100g TAL221 https://www.sparkfun.com/products/14727
 
 void setup() {
   Serial.begin(9600);
@@ -59,13 +60,14 @@ void setup() {
   Serial.println(zero_factor);
 }
 
+char buff[32];
 void loop() {
 
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
 
   Serial.print("Reading: ");
-  Serial.print(scale.get_units(), 1);
-  Serial.print(" lbs"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
+  Serial.print(scale.get_units(), 3);
+  Serial.print(" g"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
   Serial.print(" calibration_factor: ");
   Serial.print(calibration_factor);
   Serial.println();
@@ -73,6 +75,8 @@ void loop() {
   if(Serial.available())
   {
     char temp = Serial.read();
+    sprintf(buff, " <read %c> ", temp);
+    Serial.print(buff);
     if(temp == '+' || temp == 'a')
       calibration_factor += 10;
     else if(temp == '-' || temp == 'z')
