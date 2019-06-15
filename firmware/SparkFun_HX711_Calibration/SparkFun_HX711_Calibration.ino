@@ -50,6 +50,7 @@ void setup() {
   Serial.println("After readings begin, place known weight on scale");
   Serial.println("Press + or a to increase calibration factor");
   Serial.println("Press - or z to decrease calibration factor");
+  Serial.println("Press t to reset scale to 0");
 
   scale.begin(DOUT, CLK);
   scale.set_scale();
@@ -75,11 +76,11 @@ void loop() {
   if(Serial.available())
   {
     char temp = Serial.read();
-    sprintf(buff, " <read %c> ", temp);
-    Serial.print(buff);
     if(temp == '+' || temp == 'a')
       calibration_factor += 10;
     else if(temp == '-' || temp == 'z')
       calibration_factor -= 10;
+    else if(temp == 't')
+      scale.tare();
   }
 }
